@@ -3,7 +3,13 @@ import sys
 import pygame as pg
 
 
-WIDTH, HEIGHT = 1100, 650
+WIDTH, HEIGHT = 1100, 650 #スクリーン
+DELTA ={
+    pg.K_UP:(0,-5),
+    pg.K_DOWN:(0,5),
+    pg.K_LEFT:(-5,0),
+    pg.K_RIGHT:(5,0),
+}
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 
@@ -24,6 +30,11 @@ def main():
 
         key_lst = pg.key.get_pressed()
         sum_mv = [0, 0]
+        for key,mv in DELTA.items():
+            if key_lst[key]:
+                sum_mv[0]+=mv[0]
+                sum_mv[1]+=mv[1]
+
         if key_lst[pg.K_UP]:
             sum_mv[1] -= 5
         if key_lst[pg.K_DOWN]:
