@@ -28,12 +28,20 @@ def check_bound(rct:pg.Rect) -> tuple[bool,bool]:
         tate = False
     return yoko,tate
 def gameover(screen:pg.Surface)->None:
-    a=pg.Surface((1100,650))
-    b=pg.surface.set_alpha(50)
+    img=pg.image.load("fig/8.png")
     fonto=pg.font.Font(None,80)
-    txt_rct=fonto.render("GAME OVER",True,255,255,255)
-    time.sleep(5)
+    txt_rct=fonto.render("GAME OVER",255,255,255)
+    screen.blit(txt_rct,[370,320])
+    screen.blit(img,[300,700])
+    screen.blit(img,[700,300])
+    bb=pg.Surface((WIDTH+HEIGHT))
+    pg.draw.rect(bb,(0,0,0),(0,0,WIDTH,HEIGHT))
+    screen.blit(txt_rct,[370,320])
+    screen.blit(img,[300,300])
+    screen.blit(img,[700,300])
     pg.display.update()
+    time.sleep(5)
+    return
 def init_bb_imgs() ->tuple[list[pg.Surface],list[int]]:
     bb_accs=[a for a in range(1,11)]
     for r in range(1,11):
@@ -50,7 +58,7 @@ def init_bb_imgs() ->tuple[list[pg.Surface],list[int]]:
 def main():
     pg.display.set_caption("逃げろ！こうかとん")
     screen = pg.display.set_mode((WIDTH, HEIGHT))
-    bg_img = pg.image.load("fig/pg_bg.jpg")    
+    bb_img = pg.image.load("fig/pg_bg.jpg")    
     kk_img = pg.transform.rotozoom(pg.image.load("fig/3.png"), 0, 0.9)
     kk_rct = kk_img.get_rect()
     kk_rct.center = 300, 200
@@ -59,7 +67,7 @@ def main():
     pg.draw.circle(bb_ing,(255,0,0,),(10,10),10)
     bb_rct = bb_ing.get_rect()
     bb_rct.center=random.randint(0,WIDTH),random.randint(0,HEIGHT)
-    bg_img.set_colorkey((0,0,0))
+    bb_img.set_colorkey((0,0,0))
     vx,vy=+5,+5
     clock = pg.time.Clock()
     tmr = 0
@@ -67,7 +75,7 @@ def main():
         for event in pg.event.get():
             if event.type == pg.QUIT: 
                 return
-        screen.blit(bg_img, [0, 0]) 
+        screen.blit(bb_img, [0, 0]) 
         if kk_rct.colliderect(bb_rct):
             print("GAME OVER")
             return
@@ -101,6 +109,10 @@ def main():
             vy *=-1 
         pg.display.update()
         tmr += 1
+        if kk_rct.colliderect(bb_rct):
+            gameover(screen)
+            time.sleep(5)
+            return
         clock.tick(50)
 
 
