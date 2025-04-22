@@ -14,6 +14,19 @@ DELTA ={
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 
+def check_bound(rct:pg.Rect) -> tuple[bool,bool]:
+    """
+    引数:こうかとんrctまたは爆弾rct
+    戻り値:判定結果タプル(横,縦)
+    画面内ならTrue,画面外ならFalse
+    """
+    yoko,tate = True,True
+    if rct.left<0 or WIDTH<rct.right:
+        yoko = False
+    if rct.top<0 or HEIGHT<rct.bottom:
+        tate = False
+    return yoko,tate
+
 def main():
     pg.display.set_caption("逃げろ！こうかとん")
     screen = pg.display.set_mode((WIDTH, HEIGHT))
@@ -26,6 +39,8 @@ def main():
     pg.draw.circle(bb_ing,(255,0,0,),(10,10),10)
     bb_rct = bb_ing.get_rect()
     bb_rct.center=random.randint(0,WIDTH),random.randint(0,HEIGHT)
+    bg_img.set_colorkey((0,0,0))
+    vx,vy=+5,+5
     clock = pg.time.Clock()
     tmr = 0
     while True:
@@ -33,6 +48,9 @@ def main():
             if event.type == pg.QUIT: 
                 return
         screen.blit(bg_img, [0, 0]) 
+        if kk_rct.colliderect(bb_rct):
+            print("GAME OVER")
+            return
 
         key_lst = pg.key.get_pressed()
         sum_mv = [0, 0]
@@ -50,8 +68,16 @@ def main():
         #if key_lst[pg.K_RIGHT]:
          #   sum_mv[0] += 5
         kk_rct.move_ip(sum_mv)
+        if check_bound(kk_rct) !=(True,True):
+            kk_rct.move_ip(-sum_mv[0],-sum_mv[1])
         screen.blit(kk_img, kk_rct)
-        screen.blit(bb_ing, bb_rct)
+        bb_rct.move_ip(vx,vy)
+        screen.blit(bb_ing,bb_rct)
+        yoko,tate=check_bound(bb_rct)
+        if not yoko:
+            vx *=-1
+        if not tate:
+            vy *=-1 
         pg.display.update()
         tmr += 1
         clock.tick(50)
