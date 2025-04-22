@@ -1,6 +1,7 @@
 import os
 import random
 import sys
+import time
 import pygame as pg
 
 
@@ -26,6 +27,25 @@ def check_bound(rct:pg.Rect) -> tuple[bool,bool]:
     if rct.top<0 or HEIGHT<rct.bottom:
         tate = False
     return yoko,tate
+def gameover(screen:pg.Surface)->None:
+    a=pg.Surface((1100,650))
+    b=pg.surface.set_alpha(50)
+    fonto=pg.font.Font(None,80)
+    txt_rct=fonto.render("GAME OVER",True,255,255,255)
+    time.sleep(5)
+    pg.display.update()
+def init_bb_imgs() ->tuple[list[pg.Surface],list[int]]:
+    bb_accs=[a for a in range(1,11)]
+    for r in range(1,11):
+        bb_img=pg.Surface((20*r,20*r))
+        pg.draw.c(bb_img,(255,0,0),(10*r,10*r),10*r)
+        return
+    vx =1
+    tmr=r
+    bb_imgs,bb_accs=init_bb_imgs()
+    avx = vx*bb_accs[min(tmr//500,9)]
+    bb_img=bb_imgs[min(tmr//500,9)]
+
 
 def main():
     pg.display.set_caption("逃げろ！こうかとん")
@@ -58,6 +78,7 @@ def main():
             if key_lst[key]:
                 sum_mv[0]+=mv[0]
                 sum_mv[1]+=mv[1]
+        
 
         #if key_lst[pg.K_UP]:
          #   sum_mv[1] -= 5
